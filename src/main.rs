@@ -106,8 +106,8 @@ impl Grid {
 
     fn print_cell(&self, state: bool, output: &mut Write) -> io::Result<()> {
         let result = match state {
-            true => output.write(b"x"),
-            false => output.write(b"."),
+            true => output.write("\u{2588}".as_bytes()),
+            false => output.write("\u{2591}".as_bytes()),
         };
 
         try!(result);
