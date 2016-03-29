@@ -1,8 +1,11 @@
 extern crate rand;
+extern crate time;
+
 use std::io::{self, Write};
 use std::collections::HashMap;
 use rand::{ThreadRng, Rng};
 use std::time::Duration;
+use time::Timespec;
 use std::env;
 
 struct Grid {
@@ -137,13 +140,24 @@ impl Grid {
 
 fn main() {
     let ascii: bool = env::args().find(|s| s == "--ascii") != None;
+    let bench: bool = env::args().find(|s| s == "--benchmark") != None;
+
     let mut g = Grid::new(70, 30, ascii);
     let mut stdout = io::stdout();
     g.randomize();
     let sleep_time = Duration::from_millis(100);
     loop {
         println!("\x1Bc");
+
+	let start: Timespec = time::now().to_timespec();
         g.print_to(&mut stdout).unwrap();
+	let end = time::now().to_timespec();
+
+	if bench {
+	   let diff = end - start;
+	   println!("{} ms", diff.num_milliseconds());
+	}
+
         std::thread::sleep(sleep_time);
         g.step();
     }
